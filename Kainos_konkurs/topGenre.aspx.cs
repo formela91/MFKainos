@@ -52,6 +52,7 @@ namespace Kainos_konkurs
             {
                 genrePercentage.Add(genreSum[i] * 100 / sum);
                 Chart1.Series["Series1"].Points.AddXY(genre[i], genrePercentage[i]);
+                //Chart1.SaveImage("~/image1.png");
 
             }
         }
