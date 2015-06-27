@@ -2,12 +2,14 @@
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
 
-    <div class="jumbotron">
+    
         <div class="text-center">
-            TOP 20:<asp:Table ID="Table1" runat="server" Font-Size="Medium" GridLines="Both" HorizontalAlign="Center">
+            <h3>TOP 20:</h3>
+            <br />
+            <asp:Table ID="Table1" runat="server" Font-Size="Medium" GridLines="Both" HorizontalAlign="Center">
             </asp:Table>
         </div>
-    </div>
+    
 
     
 

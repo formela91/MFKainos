@@ -19,7 +19,7 @@ namespace Kainos_konkurs
 
         protected void Button1_Click(object sender, EventArgs e)
         {
-            string Genre = TextBoxGenre.Text;
+            string Genre = DropDownListGenre.SelectedValue;
             string Score = TextBoxScore.Text;
 
             string connectionString2 = "Server=ec2-54-83-18-87.compute-1.amazonaws.com;" +
@@ -32,33 +32,50 @@ namespace Kainos_konkurs
             NpgsqlConnection myConnection = new NpgsqlConnection(connectionString2); // nawiazanie polaczenia z baza danych npgsql poprzez connection string
             myConnection.Open();
 
-            // wywolywanie komend mySQL poprzez C#
-            NpgsqlCommand command = new NpgsqlCommand("SELECT movie.movie_id, movie.title, movie.avg_score FROM public.genre, public.genre_id, public.movie "+
-                "WHERE genre_id.genre_id = genre.id AND movie.movie_id = genre_id.movie_id AND genre.genre_name = '"+Genre+"' AND movie.avg_score >= '"+Score+"' ORDER BY movie.avg_score DESC;", myConnection);
-
-
-            // too many connections :(
-            // sprawdzic czy dziala wyszukiwanie
-            // sprawdzic czy dziala wyswietlanie wynikow 
-            // Label1.Text = Genre + "; " + Score;
-
-            NpgsqlDataReader reader = command.ExecuteReader();
 
             var id = new List<int>(); //deklaracja listy zawierajacej numery ID filmow wybranych z bazy danych
             var title = new List<string>();
             var avgScore = new List<string>();
+            
+            if (Genre == "All"){
 
-            while (reader.Read())
-            {
+                NpgsqlCommand command = new NpgsqlCommand("SELECT DISTINCT movie.movie_id, movie.title, movie.avg_score FROM public.genre, public.genre_id, public.movie " +
+               "WHERE genre_id.genre_id = genre.id AND movie.movie_id = genre_id.movie_id AND movie.avg_score >= '" + Score + "' ORDER BY movie.avg_score DESC;", myConnection);
+                NpgsqlDataReader reader = command.ExecuteReader();
 
-                id.Add(reader.GetInt32(0)); // dodanie pierwszej kolumny z bazy do listy ID
-                title.Add(reader.GetString(1));
-                avgScore.Add(reader.GetString(2));
-                counter += 1;
+
+                while (reader.Read())
+                {
+
+                    id.Add(reader.GetInt32(0)); // dodanie pierwszej kolumny z bazy do listy ID
+                    title.Add(reader.GetString(1));
+                    avgScore.Add(reader.GetString(2));
+                    counter += 1;
+                }
+                reader.Close(); // zamkniecie readera
+                myConnection.Close(); // zamkniecie polaczenia z baza danych
             }
-            reader.Close(); // zamkniecie readera
-            myConnection.Close(); // zamkniecie polaczenia z baza danych
+            else
+            {
+                NpgsqlCommand command = new NpgsqlCommand("SELECT movie.movie_id, movie.title, movie.avg_score FROM public.genre, public.genre_id, public.movie " +
+             "WHERE genre_id.genre_id = genre.id AND movie.movie_id = genre_id.movie_id AND genre.genre_name = '" + Genre + "' AND movie.avg_score >= '" + Score + "' ORDER BY movie.avg_score DESC;", myConnection);
+                NpgsqlDataReader reader = command.ExecuteReader();
 
+
+                while (reader.Read())
+                {
+
+                    id.Add(reader.GetInt32(0)); // dodanie pierwszej kolumny z bazy do listy ID
+                    title.Add(reader.GetString(1));
+                    avgScore.Add(reader.GetString(2));
+                    counter += 1;
+                }
+                reader.Close(); // zamkniecie readera
+                myConnection.Close(); // zamkniecie polaczenia z baza danych
+            }
+
+         
+                   
             TableRow tRow_top = new TableRow();
             Table1.Rows.Add(tRow_top);
             TableCell tCell_top1 = new TableCell();
@@ -69,7 +86,7 @@ namespace Kainos_konkurs
             tRow_top.Cells.Add(tCell_top2);
 
 
-            for (int i = 0; i < counter; i++) // sprawdzic dzialanie countera <<<=========================================
+            for (int i = 0; i < counter; i++) 
             {
                 TableRow tRow = new TableRow();
                 Table1.Rows.Add(tRow);
@@ -88,11 +105,13 @@ namespace Kainos_konkurs
 
                 System.Web.UI.WebControls.HyperLink h = new HyperLink();
                 h.Text = "Szczegółowy opis";
-                // h.NavigateUrl = "http://www.omdbapi.com/?t=" + title[i].ToString() + "&y=&plot=short&r=xml";
                 h.NavigateUrl = "movie.aspx/?id=" + id[i].ToString();
                 tCell3.Controls.Add(h);
 
             }
+
+           
+
 
         }
        

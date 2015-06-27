@@ -13,13 +13,13 @@ namespace Kainos_konkurs {
     public partial class search {
         
         /// <summary>
-        /// TextBoxGenre control.
+        /// DropDownListGenre control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox TextBoxGenre;
+        protected global::System.Web.UI.WebControls.DropDownList DropDownListGenre;
         
         /// <summary>
         /// Button1 control.
